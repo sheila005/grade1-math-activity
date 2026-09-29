@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATH CLUB HOUSE</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Baloo+2:wght@800&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>*{font-family:'Fredoka',sans-serif} h1,h2{font-family:'Baloo 2',cursive}</style>
+</head>
+<body class="bg-[#FFF8F5]"><div id="root"></div>
+<script type="text/babel">
+const {useState}=React;
+const GAMES=[
+ {id:0,title:"Count 1-4",emoji:"🍬",color:"#FF7EB6",light:"#FFE4EE"},
+ {id:1,title:"Add 1-5",emoji:"🍭",color:"#FF9E5C",light:"#FFE9D6"},
+ {id:2,title:"Take 1 Away",emoji:"🧸",color:"#5CB8FF",light:"#D6EEFF"},
+ {id:3,title:"Shapes",emoji:"🔵",color:"#6DD957",light:"#E0FFD6"},
+ {id:4,title:"Big or Small",emoji:"🐘",color:"#A78BFA",light:"#E9DDFF"},
+ {id:5,title:"Missing No.",emoji:"🔢",color:"#D6A000",light:"#FFF4B8"},
+ {id:6,title:"Pattern",emoji:"🎨",color:"#FF6B9D",light:"#FFD6E8"},
+ {id:7,title:"Tens 10,20",emoji:"🧱",color:"#3EC0A0",light:"#C6FFF0"},
+ {id:8,title:"Clock",emoji:"⏰",color:"#FF9B3D",light:"#FFE8C8"},
+ {id:9,title:"Coins 1 peso",emoji:"🪙",color:"#8A6D00",light:"#FFF5B8"},
+];
+function App(){
+ const [name,setName]=useState(""); const [entered,setEntered]=useState(false); const [cur,setCur]=useState(0); const [stars,setStars]=useState(Array(10).fill(0)); const [msg,setMsg]=useState(""); const [q,setQ]=useState(()=>makeQ(0));
+ function makeQ(i){
+  if(i===0){const n=Math.floor(Math.random()*4)+1; const e=["🍬","🍎","⭐"][Math.floor(Math.random()*3)]; let o=[n]; while(o.length<3){let v=Math.floor(Math.random()*4)+1; if(!o.includes(v)) o.push(v);} return {n,e,o:o.sort(()=>Math.random()-0.5)}}
+  if(i===1){const a=Math.floor(Math.random()*3)+1,b=Math.floor(Math.random()*2)+1,ans=a+b; return {a,b,ans,o:[ans,ans+1>5?1:ans+1,ans-1<1?3:ans-1].sort(()=>Math.random()-0.5)}}
+  if(i===2){const t=Math.floor(Math.random()*3)+3,r=1,ans=t-r; return {t,r,ans,o:[ans,t,ans+1].slice(0,3).sort(()=>Math.random()-0.5)}}
+  if(i===3){const shapes=[{n:"circle",e:"🔵",l:"Circle"},{n:"square",e:"🟦",l:"Square"},{n:"triangle",e:"🔺",l:"Triangle"}]; const s=shapes[Math.floor(Math.random()*3)]; let opts=shapes.slice().sort(()=>Math.random()-0.5).slice(0,3); if(!opts.find(x=>x.n===s.n)) opts[0]=s; return {s,opts:opts.sort(()=>Math.random()-0.5)}}
+  if(i===4){let a=Math.floor(Math.random()*5)+1; let b=Math.floor(Math.random()*5)+1; if(a===b) b=(a%5)+1; return {a,b}}
+  if(i===5){const arr=[1,2,3,4,5].sort(()=>Math.random()-0.5).slice(0,3).sort((a,b)=>a-b); const mi=Math.floor(Math.random()*3); const ans=arr[mi]; let disp=arr.map((v,idx)=> idx===mi?"?":v); return {disp,ans,arr}}
+  if(i===6){const pat=[["🔴","🔵"],["🟡","🟢"]][Math.floor(Math.random()*2)]; const seq=[pat[0],pat[1],pat[0]]; return {seq,ans:pat[1],opts:[pat[0],pat[1]].sort(()=>Math.random()-0.5)}}
+  if(i===7){const tens=Math.floor(Math.random()*2)+1; return {n:tens*10,tens}}
+  if(i===8){const h=[12,3,6,9][Math.floor(Math.random()*4)]; return {h,ans:`${h}:00`}}
+  if(i===9){const num=Math.floor(Math.random()*4)+1; return {num,ans:num,o:[num,num+1>5?1:num+1,num-1<1?5:num-1].sort(()=>Math.random()-0.5)}}
+ }
+ const done=stars.filter(s=>s>0).length; const total=stars.reduce((a,b)=>a+b,0);
+ function ok(){setStars(s=>{let n=[...s]; n[cur]+=1; return n;}); setMsg("Great job! 🌟"); setTimeout(()=>{setMsg(""); setQ(makeQ(cur));},1000);}
+ function no(){setMsg("Try again! 👀"); setTimeout(()=>setMsg(""),800);}
+ function R(){
+  const qq=q;
+  if(cur===0) return (<div className="text-center"><h2 className="text-[30px] font-black text-[#FF7EB6]">How many {qq.e}?</h2><p className="text-[14px] font-bold text-[#FFB6D9]">Count 1 to 4 - very easy</p><div className="mt-5 p-5 rounded-[20px] bg-white border-[4px] border-[#FFE4EE] max-w-[280px] mx-auto"><div className="flex justify-center gap-2 flex-wrap">{Array.from({length:qq.n}).map((_,i)=><span key={i} className="text-[42px]">{qq.e}</span>)}</div></div><div className="grid grid-cols-3 gap-3 max-w-[280px] mx-auto mt-5">{qq.o.map(o=><button key={o} onClick={()=>o===qq.n?ok():no()} className="h-[62px] rounded-[16px] bg-white border-[4px] border-[#FFE4EE] text-[26px] font-black text-[#FF7EB6]">{o}</button>)}</div></div>);
+  if(cur===1) return (<div className="text-center"><h2 className="text-[28px] font-black text-[#FF9E5C]">Add them - easy!</h2><div className="flex justify-center items-center gap-2 mt-5"><div className="w-[100px] h-[90px] rounded-[16px] bg-[#FFF3E6] border-[3px] border-[#FFE9D6] flex flex-col items-center justify-center"><div className="text-[10px] font-black text-[#FF9E5C]">A</div><div>{Array.from({length:qq.a}).map((_,i)=><span key={i}>🍭</span>)}</div><div className="font-black text-[#FF9E5C]">{qq.a}</div></div><div className="font-black text-[#FFE4EE]">+</div><div className="w-[100px] h-[90px] rounded-[16px] bg-[#FFF3E6] border-[3px] border-[#FFE9D6] flex flex-col items-center justify-center"><div className="text-[10px] font-black text-[#FF9E5C]">B</div><div>{Array.from({length:qq.b}).map((_,i)=><span key={i}>🍭</span>)}</div><div className="font-black text-[#FF9E5C]">{qq.b}</div></div></div><div className="mt-3 text-[20px] font-black text-[#FF9E5C]">{qq.a}+{qq.b}=?</div><div className="flex justify-center gap-2 mt-3">{qq.o.map(o=><button key={o} onClick={()=>o===qq.ans?ok():no()} className="w-[62px] h-[62px] rounded-[14px] bg-white border-[3px] border-[#FFE9D6] text-[22px] font-black text-[#FF9E5C]">{o}</button>)}</div></div>);
+  if(cur===2) return (<div className="text-center"><h2 className="text-[28px] font-black text-[#5CB8FF]">Take 1 away</h2><div className="mt-3 text-[16px] font-bold text-[#5CB8FF]">{qq.t} bears - take {qq.r}</div><div className="flex justify-center gap-1 mt-3 flex-wrap max-w-[240px] mx-auto">{Array.from({length:qq.t}).map((_,i)=><span key={i} className={`text-[36px] ${i<qq.r?'opacity-20':''}`}>🧸</span>)}</div><div className="mt-2 font-black text-[#5CB8FF]">{qq.t}-{qq.r}=?</div><div className="flex justify-center gap-2 mt-3">{qq.o.map(o=><button key={o} onClick={()=>o===qq.ans?ok():no()} className="w-[60px] h-[60px] rounded-[14px] bg-white border-[3px] border-[#D6EEFF] text-[20px] font-black text-[#5CB8FF]">{o}</button>)}</div></div>);
+  if(cur===3) return (<div className="text-center"><h2 className="text-[28px] font-black text-[#6DD957]">Find {qq.s.l}!</h2><div className="mt-6 flex justify-center gap-3">{qq.opts.map(o=><button key={o.n} onClick={()=>o.n===qq.s.n?ok():no()} className="w-[80px] h-[80px] rounded-[18px] bg-white border-[4px] border-[#E0FFD6] text-[36px]">{o.e}</button>)}</div></div>);
+  if(cur===4) return (<div className="text-center"><h2 className="text-[28px] font-black text-[#A78BFA]">Which is bigger?</h2><div className="flex justify-center gap-4 mt-6"><div className="w-[90px] h-[90px] rounded-[18px] bg-white border-[4px] border-[#E9DDFF] flex items-center justify-center text-[32px] font-black text-[#A78BFA]">{qq.a}</div><div className="w-[90px] h-[90px] rounded-[18px] bg-white border-[4px] border-[#E9DDFF] flex items-center justify-center text-[32px] font-black text-[#A78BFA]">{qq.b}</div></div><div className="flex justify-center gap-3 mt-5"><button onClick={()=>qq.a>qq.b?ok():no()} className="px-5 h-[52px] rounded-[12px] bg-white border-[3px] border-[#E9DDFF] font-black text-[#A78BFA]">{qq.a} bigger</button><button onClick={()=>qq.b>qq.a?ok():no()} className="px-5 h-[52px] rounded-[12px] bg-white border-[3px] border-[#E9DDFF] font-black text-[#A78BFA]">{qq.b} bigger</button></div></div>);
+  if(cur===5) return (<div className="text-center"><h2 className="text-[26px] font-black text-[#D6A000]">Missing number 1-5</h2><div className="flex justify-center gap-2 mt-6">{qq.disp.map((v,i)=><div key={i} className={`w-[52px] h-[52px] rounded-[12px] border-[3px] flex items-center justify-center text-[20px] font-black ${v==="?"?"bg-[#FFF4B8] border-[#FFEAA0] text-[#8A6D00]":"bg-white border-[#FFF4B8] text-[#8A6D00]"}`}>{v}</div>)}</div><div className="flex justify-center gap-2 mt-4">{[1,2,3,4,5].filter(n=>qq.arr.includes(n)).map(n=><button key={n} onClick={()=>n===qq.ans?ok():no()} className="w-[48px] h-[48px] rounded-[10px] bg-white border-[3px] border-[#FFF4B8] font-black text-[#8A6D00]">{n}</button>)}</div></div>);
+  if(cur===6) return (<div className="text-center"><h2 className="text-[26px] font-black text-[#FF6B9D]">What comes next?</h2><div className="flex justify-center gap-2 mt-6 text-[24px]">{qq.seq.map((s,i)=><div key={i} className="w-[52px] h-[52px] rounded-[12px] bg-white border-[3px] border-[#FFD6E8] flex items-center justify-center">{s}</div>)}<div className="w-[52px] h-[52px] rounded-[12px] bg-[#FFD93D] border-[3px] border-[#FFEAA0] flex items-center justify-center font-black">?</div></div><div className="flex justify-center gap-2 mt-4">{qq.opts.map(o=><button key={o} onClick={()=>o===qq.ans?ok():no()} className="w-[56px] h-[56px] rounded-[12px] bg-white border-[3px] border-[#FFD6E8] text-[22px]">{o}</button>)}</div></div>);
+  if(cur===7) return (<div className="text-center"><h2 className="text-[26px] font-black text-[#3EC0A0]">Count tens: 10,20</h2><div className="mt-4 text-[20px] font-black text-[#3EC0A0]">Number {qq.n}</div><div className="flex justify-center gap-2 mt-3">{Array.from({length:qq.tens}).map((_,i)=><div key={i} className="w-[56px] h-[14px] rounded-[6px] bg-[#60E0C0] border-[2px] border-white"></div>)}</div><button onClick={()=>ok()} className="mt-5 px-5 h-[44px] rounded-full bg-[#60E0C0] text-white font-black">I see! ✅</button></div>);
+  if(cur===8) return (<div className="text-center"><h2 className="text-[26px] font-black text-[#FF9B3D]">What time?</h2><div className="mt-4 mx-auto w-[110px] h-[110px] rounded-full bg-white border-[4px] border-[#FFE8C8] flex items-center justify-center text-[48px]">{qq.h===12?"🕛":qq.h===3?"🕒":qq.h===6?"🕕":"🕘"}</div><div className="mt-2 font-black text-[#FF9B3D]">{qq.h} o'clock</div><div className="flex justify-center gap-2 mt-3 flex-wrap max-w-[260px] mx-auto">{[qq.ans, `${(qq.h%12)+1}:00`].sort(()=>Math.random()-0.5).map(t=><button key={t} onClick={()=>t===qq.ans?ok():no()} className="px-3 h-[40px] rounded-[10px] bg-white border-[2px] border-[#FFE8C8] font-black text-[#FF9B3D] text-[13px]">{t}</button>)}</div></div>);
+  if(cur===9) return (<div className="text-center"><h2 className="text-[26px] font-black text-[#8A6D00]">Count 1-peso coins</h2><div className="mt-4 flex justify-center gap-1 flex-wrap max-w-[200px] mx-auto">{Array.from({length:qq.num}).map((_,i)=><div key={i} className="w-[44px] h-[44px] rounded-full bg-[#FFD93D] border-[2px] border-white flex items-center justify-center font-black text-white">1</div>)}</div><div className="mt-2 font-black text-[#8A6D00]">{qq.num} peso</div><div className="flex justify-center gap-2 mt-3">{qq.o.map(o=><button key={o} onClick={()=>o===qq.ans?ok():no()} className="w-[52px] h-[52px] rounded-[10px] bg-white border-[2px] border-[#FFF4B8] font-black text-[#8A6D00]">{o}</button>)}</div></div>);
+ }
+ return (
+  <div className="min-h-screen bg-[#FFF8F5]">
+   <div className="h-[10px] w-full" style={{background:"linear-gradient(90deg,#FFB6D9 0 25%,#FFD93D 25% 50%,#A6E8FF 50% 75%,#B9FFB9 75% 100%)"}}></div>
+   <div className="pointer-events-none fixed inset-0 z-0 opacity-50">
+    <div style={{position:"absolute",top:"8%",left:"3%",fontSize:"24px"}}>🍭</div>
+    <div style={{position:"absolute",top:"12%",right:"4%",fontSize:"20px"}}>🍬</div>
+    <div style={{position:"absolute",top:"82%",left:"3%",fontSize:"22px"}}>🧁</div>
+    <div style={{position:"absolute",top:"86%",right:"4%",fontSize:"20px"}}>🍪</div>
+   </div>
+   <header className="relative z-10 max-w-[1000px] mx-auto px-4 pt-3">
+    <div className="rounded-[18px] bg-white border-[3px] border-white shadow-[0_4px_12px_rgba(255,182,217,0.15)] px-4 h-[66px] flex items-center justify-between">
+     <div className="flex items-center gap-2"><div className="w-[42px] h-[42px] rounded-[10px] bg-[#FFE4EE] flex items-center justify-center text-[20px]">🏠</div><div><div className="font-black text-[18px] leading-none text-[#FF6B9D]" style={{fontFamily:"'Baloo 2',cursive"}}>MATH CLUB HOUSE</div><div className="text-[9px] font-bold tracking-widest text-[#FFB6D9]">GRADE 1 • STILL & SIMPLE</div></div></div>
+     <div className="flex gap-2"><div className="px-2.5 h-[28px] rounded-full bg-[#FFF4B8] border-[2px] border-white font-black text-[10px] text-[#8A6D00]">⭐ {total}</div><div className="px-2.5 h-[28px] rounded-full bg-[#FFE4EE] border-[2px] border-white font-black text-[10px] text-[#FF6B9D]">{done}/10</div></div>
+    </div>
+    <div className="mt-2 h-[6px] bg-white border-[2px] border-white rounded-full overflow-hidden"><div className="h-full bg-[#FFB6D9]" style={{width:`${(done/10)*100}%`}}></div></div>
+   </header>
+   <div className="relative z-10 max-w-[1000px] mx-auto px-3 mt-3">
+    <div className="flex gap-2 overflow-x-auto pb-2" style={{scrollbarWidth:"none"}}>
+     {GAMES.map((g,i)=><button key={g.id} onClick={()=>{setCur(i); setQ(makeQ(i)); setMsg("");}} className={`shrink-0 w-[104px] h-[78px] rounded-[14px] border-[2px] text-left p-2 ${cur===i?"bg-white border-[#FFB6D9]":"bg-white/60 border-white"}`}><div className="w-[28px] h-[28px] rounded-[6px] flex items-center justify-center text-[16px]" style={{background:g.light}}>{g.emoji}</div><div className="font-bold text-[10px] mt-1" style={{color:g.color}}>{g.title}</div></button>)}
+    </div>
+   </div>
+   <main className="relative z-10 max-w-[640px] mx-auto px-4 pb-16">
+    <div className="mt-3 rounded-[24px] bg-white border-[3px] border-white shadow-[0_8px_24px_rgba(255,182,217,0.12)] p-5 md:p-7 min-h-[480px]">
+     {!entered ? (
+      <div className="text-center py-1">
+       <div className="inline-flex px-2.5 py-1 rounded-full bg-[#FFE4EE] text-[#FF6B9D] font-black text-[9px] tracking-widest">WELCOME GRADE 1!</div>
+       <div className="mt-3 text-[48px]">🏠🍭</div>
+       <h1 className="mt-2 text-[48px] md:text-[58px] font-black leading-[0.85]" style={{fontFamily:"'Baloo 2',cursive"}}><span className="block text-[#FF6B9D]">MATH</span><span className="block text-[#5CB8FF] -mt-1">CLUB</span><span className="block text-[#FFD93D] -mt-1">HOUSE</span></h1>
+       <div className="mt-2 inline-flex px-3 py-1 rounded-full bg-[#FFE4EE] font-black text-[#FF6B9D] text-[11px]">Still • Simple • No Movement</div>
+       <p className="mt-2 text-[13px] font-bold text-[#FF9EB6] max-w-[300px] mx-auto">10 super easy games. Numbers 1-5 only. Big buttons. Nothing moves!</p>
+       <div className="mt-5 max-w-[340px] mx-auto rounded-[16px] bg-[#FFF8F5] border-[2px] border-white p-3">
+        <div className="text-left font-black text-[10px] text-[#FF6B9D]">YOUR NAME</div>
+        <input value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&name.trim()&&setEntered(true)} placeholder="Type name..." className="mt-1 w-full h-[48px] rounded-[10px] border-[2px] border-[#FFE4EE] bg-white px-3 text-[16px] font-bold outline-none text-[#FF6B9D] placeholder:opacity-30"/>
+        <button onClick={()=>name.trim()&&setEntered(true)} disabled={!name.trim()} className="mt-2 w-full h-[48px] rounded-[10px] bg-[#FFB6D9] text-white font-black text-[16px] border-[2px] border-white disabled:opacity-40">Enter House! 🏠</button>
+       </div>
+      </div>
+     ) : (
+      <div><div className="flex items-center justify-between mb-4"><div className="font-black text-[13px] text-[#FF6B9D]">Hi, {name}! 👋</div><div className="text-[9px] font-black px-2 py-1 rounded-full" style={{background:GAMES[cur].light,color:GAMES[cur].color}}>{GAMES[cur].emoji} {GAMES[cur].title}</div></div>{R()}{msg && <div className="mt-5 text-center font-black text-[16px] text-[#FF6B9D]">{msg}</div>}<div className="mt-6 flex justify-between"><button onClick={()=>{let n=Math.max(0,cur-1); setCur(n); setQ(makeQ(n));}} className="px-3 h-[36px] rounded-full bg-white border-[2px] border-[#FFE4EE] font-bold text-[11px] text-[#FF6B9D]">← Back</button><button onClick={()=>{let n=Math.min(9,cur+1); setCur(n); setQ(makeQ(n));}} className="px-3 h-[36px] rounded-full bg-[#FFF4B8] border-[2px] border-white font-bold text-[11px] text-[#8A6D00]">Next →</button></div></div>
+     )}
+    </div>
+    <div className="mt-3 text-center text-[10px] font-bold text-[#FFB6D9]">Grade 1 • Still background • Candy corners • Numbers 1-5 • No animation</div>
+   </main>
+  </div>
+ );
+}
+const root=ReactDOM.createRoot(document.getElementById('root')); root.render(<App/>);
+</script>
+</body>
+</html>
